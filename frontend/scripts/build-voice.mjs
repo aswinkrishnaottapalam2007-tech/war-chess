@@ -1,0 +1,10 @@
+import { build } from 'esbuild';
+import { copyFileSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const target = resolve(root, '../backend/static');
+mkdirSync(target, { recursive: true });
+await build({ entryPoints: [resolve(root, 'src/voice/hosted.ts')], outfile: resolve(target, 'voice-client.js'), bundle: true, minify: true, format: 'iife', target: ['es2020'] });
+copyFileSync(resolve(root, 'src/voice/pcm-worklet.js'), resolve(target, 'pcm-worklet.js'));
+console.log('Built self-hosted voice client and audio processor.');

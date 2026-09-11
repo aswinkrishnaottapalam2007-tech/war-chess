@@ -11,7 +11,9 @@ backend/
   rules.py           Pure chess/War Chess rules and ownership transitions
   game_service.py    Mongo leases, synchronization, timers, AI orchestration
   engine.py          Bounded Stockfish UCI searches, four strength profiles
-  voice.html         Foreground native WebView LiveKit client
+  voice_relay.py     Credential-free authenticated live audio fan-out
+  realtime.py        Revocable connections and distributed admission limits
+  voice.html         Foreground native WebView audio host
 frontend/
   app/               Expo Router screens
   src/components/    Board, pieces, lobby, chat, command panels, UI primitives
@@ -51,9 +53,18 @@ First-four-moves freedom means four **human turns**. The fourth forced King take
 Room mutations take a Mongo lease and update canonical history. Position-version checks prevent stale moves. Approval requests are tied to their board position and revalidated when approved. Mongo stores deadlines and result ledgers; process restart does not reset a clock or duplicate a result. AI calculates outside the mutation lock and checks round/position before committing. Sessions are hashed in Mongo and tokens use the pre-shipped secure storage adapter. Browser storage is not equivalent to native Keychain; consider secure HttpOnly web sessions before a standalone public web launch.
 
 ## Live voice
-Provide backend-only `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, then restart the backend. Credentials are never bundled into the app. Server-generated tokens restrict identity, room and publishing source to microphone. Native foreground voice runs inside an HTTPS WebView; the browser uses `livekit-client`. The vendored browser bundle is copied from the pinned SDK in `frontend/node_modules/livekit-client/dist/livekit-client.umd.js` to `backend/static/`.
+Voice now runs through the app's own authenticated WSS relay: **no external voice account or API key is required**. Six room members can send mono PCM16 audio at 16kHz in 80ms frames. Single-use, 60-second voice tickets are bound to a room, user, and originating revocable account session. Audio uses bounded memory-only queues and is not recorded. Clients buffer a small amount of audio to absorb jitter and drop excessive backlog rather than accumulating delay.
 
-**Until those credentials are supplied, live voice is unavailable and the UI says so.** Text chat is fully independent. Real-device microphone permission, audio routing, interruptions, and background behavior need verification. This initial implementation is not a substitute for production native call lifecycle testing.
+The browser uses Web Audio/AudioWorklet; native foreground audio runs in a persistent same-origin WebView after contextual microphone permission. Rebuild the hosted client after editing the shared transport with `node frontend/scripts/build-voice.mjs`. Voice persists while the chat sheet is closed, with mute/leave controls on the room screen. It stops when leaving the app foreground or signing out. HTTPS/WSS encrypts traffic in transit, but this is **not end-to-end encryption**. Headphones are recommended. Real-device permission, speaker/Bluetooth routing and interruption testing remain necessary.
+
+Voice fan-out is local to one worker, with a Mongo room-owner lease preventing split rooms. The current managed runtime uses one backend worker. Multiple workers/replicas require room-sticky routing or a dedicated shared voice router. The built-in capacity is 40 simultaneous voice rooms / six participants per room, subject to actual bandwidth/CPU testing; these are safety caps, not throughput guarantees. Set `PUBLIC_APP_ORIGINS` for browser origins in addition to same-host access. The managed preview proxy can normalize the Origin header; browser Fetch Metadata and bearer-session authorization are additionally checked.
+
+## Studio opening and account controls
+The supplied CHAOS ENGINE STUDIO video is bundled and shown once per app launch, with Skip and sound controls. Native uses H.264/AAC MP4; browser uses a WebM copy of the same full footage. Nothing is cropped. Navigation back to the main menu does not replay it. WAR CHESS icon and splash assets replace template branding.
+
+Settings includes privacy/voice information and permanent account deletion with password and DELETE confirmation. Deletion revokes sessions and voice tickets, removes submitted chat and personal ranking entries, and leaves anonymized match slots for remaining players. A durable deletion flag allows interrupted cleanup to retry automatically. Session restoration retains the saved login during transient connectivity failures, but clears expired/revoked tokens on HTTP 401.
+
+Public `/api/health` returns minimal status; `/api/health/details` requires authentication. Public rankings omit internal account IDs. WebSockets revalidate sessions server-side and before protected state sends, independently of client heartbeats.
 
 ## Assets and licenses
 - Original board/piece vectors and sound synthesis source are included. Sound files can be regenerated with `python frontend/scripts/generate_audio.py`.

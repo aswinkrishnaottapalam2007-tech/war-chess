@@ -8,6 +8,7 @@ from fastapi import HTTPException
 from pymongo.errors import DuplicateKeyError
 from database import db
 from engine import choose_move
+from realtime import registry
 from rules import (ROLES, DIFFICULTIES, announce, member, board_for, validate_move, approval_required,
                    execute_move, reset_board, public_state, after_position, eliminate, finish_game)
 
@@ -60,7 +61,8 @@ async def broadcast(room):
     payload = {'type': 'state', 'room': public_state(room)}
     for socket in list(sockets.get(room['code'], {}).keys()):
         try:
-            await asyncio.wait_for(socket.send_json(payload), timeout=2)
+            if not await registry.send_state(socket, payload, room):
+                sockets.get(room['code'], {}).pop(socket, None)
         except Exception:
             sockets.get(room['code'], {}).pop(socket, None)
 
@@ -72,6 +74,8 @@ async def save(room):
     if room['status'] == 'finished':
         rows = []
         for role, player in room['players'].items():
+            if player['id'].startswith('deleted-'):
+                continue
             rows.append({'role': role, 'user_id': player['id'], 'name': player['name'],
                          'won': int(room['result'] == 'victory'), 'moves': sum(1 for h in room['history'] if h['actor'] == role),
                          'captures': sum(1 for h in room['history'] if h['actor'] == role and h['capture'])})
@@ -88,6 +92,7 @@ async def create_room(user, difficulty):
     reset_board(room)
     announce(room, 'created', f'{user["name"]} opened the war room.')
     await db.rooms.insert_one(room.copy())
+    await db.users.update_one({'id': user['id']}, {'$addToSet': {'room_codes': room['code']}})
     return public_state(room)
 
 
@@ -101,6 +106,7 @@ async def enter_room(code, user):
             announce(room, 'joined', f'{user["name"]} joined the war room.')
             await save(room)
         require_access(room, user['id'])
+        await db.users.update_one({'id': user['id']}, {'$addToSet': {'room_codes': room['code']}})
         return public_state(room)
 
 

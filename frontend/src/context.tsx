@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { AppState, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { api, restoreToken, setToken } from './api';
@@ -13,10 +13,27 @@ export const useApp = () => useContext(AppContext);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null), [loading, setLoading] = useState(true), [toast, setToast] = useState(''), [volume, setVolumeState] = useState(0.65);
   const insets = useSafeAreaInsets(), s = useStyles(), { colors } = useTheme();
-  useEffect(() => { (async () => { await restoreTheme(); setVolumeState(Number(await storage.getItem('war-volume', 0.65))); if (await restoreToken()) { try { setUser(await api('/auth/me')); } catch { await setToken(''); } } setLoading(false); })(); }, []);
+  useEffect(() => {
+    const restore = async () => {
+      try {
+        await restoreTheme();
+        const savedVolume = Number(await storage.getItem('war-volume', 0.65));
+        setVolumeState(Number.isFinite(savedVolume) ? Math.max(0, Math.min(1, savedVolume)) : 0.65);
+        if (await restoreToken()) {
+          try { const profile = await api('/auth/me'); setUser(profile); await storage.secureSet('war-profile', JSON.stringify(profile)); }
+          catch (e: any) {
+            if (e.status === 401) { await setToken(''); await storage.secureRemove('war-profile'); setUser(null); }
+            else { const cached = await storage.secureGet<string>('war-profile', ''); try { setUser(cached ? JSON.parse(cached) : null); } catch { setUser(null); } setToast('Connection interrupted. Your saved session is preserved; reconnect to continue.'); }
+          }
+        }
+      } finally { setLoading(false); }
+    };
+    restore(); const listener = AppState.addEventListener('change', state => { if (state === 'active') restore(); });
+    return () => listener.remove();
+  }, []);
   useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(''), 5000); return () => clearTimeout(t); }, [toast]);
-  const signIn = async (data: { user: User; token: string }) => { await setToken(data.token); setUser(data.user); };
-  const signOut = async () => { try { await api('/auth/logout', 'POST'); } finally { await setToken(''); setUser(null); } };
+  const signIn = async (data: { user: User; token: string }) => { await setToken(data.token); await storage.secureSet('war-profile', JSON.stringify(data.user)); setUser(data.user); };
+  const signOut = async () => { try { await api('/auth/logout', 'POST'); } finally { await setToken(''); await storage.secureRemove('war-profile'); setUser(null); } };
   const setVolume = (v: number) => { setVolumeState(v); storage.setItem('war-volume', v); };
   return <AppContext.Provider value={{ user, loading, signIn, signOut, notify: setToast, volume, setVolume }}>
     {children}

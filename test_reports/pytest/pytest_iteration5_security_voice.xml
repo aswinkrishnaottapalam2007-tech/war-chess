@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="10" time="15.424" timestamp="2026-09-11T17:13:40.954869+00:00" hostname="agent-env-bf039f94-4eee-4605-9641-4d00a5745f14"><testcase classname="tests.test_security_voice_contracts" name="test_security_headers_and_public_health_contract" time="0.349" /><testcase classname="tests.test_security_voice_contracts" name="test_health_details_requires_auth_and_voice_engine_flags" time="2.445" /><testcase classname="tests.test_security_voice_contracts" name="test_public_leaderboards_hide_internal_identifiers" time="1.016" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_rejects_non_member_or_missing_role" time="0.086"><failure message="AssertionError: {&quot;detail&quot;:&quot;Please use an existing war room before creating more.&quot;}&#10;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code">backend/tests/test_security_voice_contracts.py:202: in test_voice_ticket_rejects_non_member_or_missing_role
+    code = _create_lobby_room(api_client, base_url, auth_tokens, roles=('king',))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:76: in _create_lobby_room
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Please use an existing war room before creating more."}
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_wrong_room_reused_and_expired_denied" time="3.005" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_pcm_frame_contract_and_no_same_sender_echo" time="3.153" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_leave_updates_peer_roster" time="1.518" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_logout_revokes_ws_without_client_ping" time="2.164"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:423: in test_sec001_logout_revokes_ws_without_client_ping
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:420: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_sec001_session_expiry_sweep_closes_ws" time="0.589" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_bad_origin_denied_and_max_three_state_connections" time="0.896"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:494: in test_sec001_bad_origin_denied_and_max_three_state_connections
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:476: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase></testsuite></testsuites>

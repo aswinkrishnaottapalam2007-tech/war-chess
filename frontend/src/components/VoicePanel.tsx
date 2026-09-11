@@ -1,0 +1,23 @@
+import React, { useState } from 'react';
+import { Linking, Platform, Pressable, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useVoice } from '@/src/voice/context';
+import { makeStyles, useTheme } from '@/src/theme';
+import { Body, Button, Label, Notice } from './ui';
+
+export function VoicePanel({ code }: { code: string }) {
+  const voice = useVoice(), s = useStyles(), { colors: c } = useTheme(), [help, setHelp] = useState(false);
+  const live = voice.status === 'connected' && voice.code === code;
+  return <View style={s.wrap}><View style={s.heading}><View style={s.icon}><Ionicons name={live ? 'radio-outline' : 'mic-outline'} size={27} color={c.brand} /></View><View style={s.flex}><Label>LIVE TEAM VOICE</Label><Body>{live ? 'Your alliance is on the line.' : 'Talk through the next move.'}</Body></View></View>
+    <Body muted>Join to enable your microphone. Voice stays connected while you use the board. Headphones are recommended.</Body>
+    {!!voice.message && <Notice testID="voice-status" text={voice.message} />}
+    {live ? <><View testID="voice-participants" style={s.peers}>{voice.peers.map(p => <View key={p.id} style={s.peer}><Ionicons name={p.muted ? 'mic-off-outline' : 'mic-outline'} size={17} color={p.muted ? c.muted : c.success} /><Text style={s.peerName}>{p.name}</Text><Text style={s.role}>{p.role.toUpperCase()}</Text></View>)}</View><Text testID="voice-received-frames" style={s.audioState}>{voice.receivedFrames > 0 ? 'Receiving live team audio' : 'Connected · waiting for teammates to speak'}</Text><Button testID="mute-voice-button" title={voice.muted ? 'UNMUTE MICROPHONE' : 'MUTE MICROPHONE'} icon={voice.muted ? 'mic-outline' : 'mic-off-outline'} onPress={voice.toggleMute} /><Button testID="disconnect-voice-button" title="LEAVE VOICE" variant="secondary" onPress={voice.leave} /></> : <><Button testID="join-voice-button" title="ENABLE MICROPHONE & JOIN" icon="mic-outline" loading={voice.status === 'connecting'} onPress={() => voice.join(code)} />{voice.blocked && <Button testID="voice-open-settings-button" title="MICROPHONE SETTINGS" variant="secondary" onPress={() => Platform.OS === 'web' ? setHelp(true) : Linking.openSettings()} />}{help && <Notice text="Open your browser’s site controls beside the address, allow Microphone, then retry Join. You can continue using text chat without microphone access." />}</>}
+    {voice.status === 'connecting' && <Button testID="cancel-voice-button" title="CANCEL CONNECTION" variant="secondary" onPress={voice.leave} />}<Text style={s.privacy}>Encrypted in transit. Audio is relayed live, not recorded. Foreground use only; it is not end-to-end encrypted.</Text>
+  </View>;
+}
+export function VoiceStatusBar({ code }: { code: string }) {
+  const voice = useVoice(), s = useStyles(), { colors: c } = useTheme();
+  if (voice.status !== 'connected' || voice.code !== code) return null;
+  return <View testID="active-voice-bar" style={s.bar}><Ionicons name="radio-outline" size={18} color={c.success} /><Text style={s.barText}>VOICE LIVE · {voice.peers.length} / 6</Text><Pressable testID="voice-bar-mute-button" accessibilityLabel={voice.muted ? 'Unmute microphone' : 'Mute microphone'} style={s.barButton} onPress={voice.toggleMute}><Ionicons name={voice.muted ? 'mic-off-outline' : 'mic-outline'} size={19} color={c.brand} /></Pressable><Pressable testID="voice-bar-leave-button" accessibilityLabel="Leave voice" style={s.barButton} onPress={voice.leave}><Ionicons name="close" size={20} color={c.muted} /></Pressable></View>;
+}
+const useStyles = makeStyles(c => ({ wrap: { gap: 19, minHeight: 280 }, heading: { flexDirection: 'row', alignItems: 'center', gap: 14 }, icon: { width: 56, height: 56, borderRadius: 12, backgroundColor: c.brandTertiary, alignItems: 'center', justifyContent: 'center' }, flex: { flex: 1 }, peers: { gap: 10 }, peer: { flexDirection: 'row', gap: 10, alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: c.border }, peerName: { fontFamily: 'Manrope', fontSize: 13, color: c.onSurface, flex: 1 }, role: { fontFamily: 'Manrope', fontSize: 8, color: c.brand, letterSpacing: 1 }, audioState: { fontFamily: 'Manrope', fontSize: 11, color: c.success }, privacy: { fontFamily: 'Manrope', fontSize: 11, color: c.muted, lineHeight: 18 }, bar: { minHeight: 46, backgroundColor: c.brandTertiary, flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingRight: 8, gap: 9, borderBottomColor: c.border, borderBottomWidth: 1 }, barText: { flex: 1, color: c.brand, fontFamily: 'Manrope', fontSize: 9, letterSpacing: 1 }, barButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' } }));

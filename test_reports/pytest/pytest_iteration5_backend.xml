@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="19" time="14.818" timestamp="2026-09-11T17:11:36.836241+00:00" hostname="agent-env-bf039f94-4eee-4605-9641-4d00a5745f14"><testcase classname="tests.test_warchess_api" name="test_public_health_contract" time="0.219" /><testcase classname="tests.test_security_voice_contracts" name="test_security_headers_and_public_health_contract" time="0.199" /><testcase classname="tests.test_security_voice_contracts" name="test_health_details_requires_auth_and_voice_engine_flags" time="0.759" /><testcase classname="tests.test_security_voice_contracts" name="test_public_leaderboards_hide_internal_identifiers" time="0.493" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_rejects_non_member_or_missing_role" time="0.736" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_wrong_room_reused_and_expired_denied" time="2.429" /><testcase classname="tests.test_warchess_api" name="test_health_details_requires_auth_and_reports_engine" time="3.408" /><testcase classname="tests.test_warchess_api" name="test_invalid_login_rejected" time="0.110" /><testcase classname="tests.test_warchess_api" name="test_session_me_logout_revocation" time="0.377" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_pcm_frame_contract_and_no_same_sender_echo" time="5.705"><failure message="assert False&#10; +  where False = isinstance('{&quot;type&quot;:&quot;peers&quot;,&quot;peers&quot;:[{&quot;id&quot;:0,&quot;name&quot;:&quot;Alden&quot;,&quot;role&quot;:&quot;king&quot;,&quot;muted&quot;:false},{&quot;id&quot;:1,&quot;name&quot;:&quot;Mira&quot;,&quot;role&quot;:&quot;queen&quot;,&quot;muted&quot;:false}]}', (&lt;class 'bytes'&gt;, &lt;class 'bytearray'&gt;))">backend/tests/test_security_voice_contracts.py:263: in test_voice_pcm_frame_contract_and_no_same_sender_echo
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:248: in scenario
+    assert isinstance(incoming, (bytes, bytearray))
+E   assert False
+E    +  where False = isinstance('{"type":"peers","peers":[{"id":0,"name":"Alden","role":"king","muted":false},{"id":1,"name":"Mira","role":"queen","muted":false}]}', (&lt;class 'bytes'&gt;, &lt;class 'bytearray'&gt;))</failure></testcase><testcase classname="tests.test_warchess_api" name="test_voice_ticket_endpoint_issues_wss_ticket" time="2.042" /><testcase classname="tests.test_warchess_api" name="test_role_lock_conflicts_and_autostart_constraints" time="0.288" /><testcase classname="tests.test_warchess_api" name="test_seventh_membership_forbidden" time="0.207" /><testcase classname="tests.test_warchess_api" name="test_ownership_stale_version_and_ai_turn_block" time="1.159" /><testcase classname="tests.test_warchess_api" name="test_non_king_cannot_approve" time="0.095" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_leave_updates_peer_roster" time="1.042"><failure message="websockets.exceptions.ConnectionClosedError: received 1008 (policy violation); then sent 1008 (policy violation)">backend/tests/test_security_voice_contracts.py:303: in test_voice_leave_updates_peer_roster
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:281: in scenario
+    payload = await asyncio.wait_for(king.recv(), timeout=5)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/tasks.py:489: in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/websockets/asyncio/connection.py:324: in recv
+    raise self.protocol.close_exc from self.recv_exc
+E   websockets.exceptions.ConnectionClosedError: received 1008 (policy violation); then sent 1008 (policy violation)</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_sec001_logout_revokes_ws_without_client_ping" time="1.861"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:338: in test_sec001_logout_revokes_ws_without_client_ping
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:335: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_sec001_session_expiry_sweep_closes_ws" time="0.603" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_bad_origin_denied_and_max_three_state_connections" time="0.078"><failure message="AssertionError: {&quot;detail&quot;:&quot;Your session has expired. Please sign in again.&quot;}&#10;assert 401 == 200&#10; +  where 401 = &lt;Response [401]&gt;.status_code">backend/tests/test_security_voice_contracts.py:386: in test_sec001_bad_origin_denied_and_max_three_state_connections
+    code = _create_lobby_room(api_client, base_url, auth_tokens, roles=('king', 'queen'))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:49: in _create_lobby_room
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Your session has expired. Please sign in again."}
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401]&gt;.status_code</failure></testcase></testsuite></testsuites>

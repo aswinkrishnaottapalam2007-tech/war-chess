@@ -13,11 +13,6 @@ Copyright Niklas Fiekas and contributors. GPL-3.0-or-later.
 Source/license: https://github.com/niklasf/python-chess
 Backend redistribution must comply with the GPL dependency's licensing terms. Do not represent the backend as a permissively licensed proprietary distribution without reviewing those terms.
 
-## LiveKit client
-Apache License 2.0. Copyright LiveKit, Inc. and contributors.
-Source and license: https://github.com/livekit/client-sdk-js
-The browser UMD SDK is vendored from the version recorded in frontend/yarn.lock for the native WebView client.
-
 ## Fonts
 Cinzel — Copyright Natanael Gama and contributors. SIL Open Font License 1.1.
 Source/license: https://github.com/google/fonts/tree/main/ofl/cinzel

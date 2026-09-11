@@ -16,7 +16,7 @@ export function useRoom(code: string) {
       ws = new WebSocket(`${BASE_URL.replace(/^http/, 'ws')}/api/ws/${code}`);
       ws.onopen = () => { ws?.send(JSON.stringify({ token: getToken() })); };
       ws.onmessage = event => { try { const data = JSON.parse(event.data); if (data.type === 'state') { update(data.room); setConnected(true); } } catch {} };
-      ws.onclose = () => { setConnected(false); if (!closed) reconnect = setTimeout(connect, 2500); };
+      ws.onclose = event => { setConnected(false); if (event.code === 4001) { closed = true; setError('Your session or room access ended. Sign in again to continue.'); } else if (!closed) reconnect = setTimeout(connect, 2500); };
       ws.onerror = () => { setConnected(false); };
     };
     refresh(); connect();

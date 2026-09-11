@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="11" time="17.564" timestamp="2026-09-11T17:18:40.427235+00:00" hostname="agent-env-bf039f94-4eee-4605-9641-4d00a5745f14"><testcase classname="tests.test_security_voice_contracts" name="test_security_headers_and_public_health_contract" time="1.993" /><testcase classname="tests.test_security_voice_contracts" name="test_health_details_requires_auth_and_voice_engine_flags" time="1.592" /><testcase classname="tests.test_security_voice_contracts" name="test_public_leaderboards_hide_internal_identifiers" time="0.595" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_rejects_non_member_or_missing_role" time="0.976" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_wrong_room_reused_and_expired_denied" time="3.109" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_pcm_frame_contract_and_no_same_sender_echo" time="3.028" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_leave_updates_peer_roster" time="1.431" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_logout_revokes_ws_without_client_ping" time="2.559"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:419: in test_sec001_logout_revokes_ws_without_client_ping
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:416: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_sec001_session_expiry_sweep_closes_ws" time="0.631" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_bad_origin_denied_and_max_three_state_connections" time="0.909"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:490: in test_sec001_bad_origin_denied_and_max_three_state_connections
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:472: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_account_deletion_contract_api" time="0.566" /></testsuite></testsuites>

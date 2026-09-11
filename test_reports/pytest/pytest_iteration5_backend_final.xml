@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="5" failures="2" skipped="0" tests="19" time="21.718" timestamp="2026-09-11T17:14:25.102930+00:00" hostname="agent-env-bf039f94-4eee-4605-9641-4d00a5745f14"><testcase classname="tests.test_warchess_api" name="test_public_health_contract" time="0.186" /><testcase classname="tests.test_warchess_api" name="test_health_details_requires_auth_and_reports_engine" time="0.816" /><testcase classname="tests.test_warchess_api" name="test_invalid_login_rejected" time="0.146" /><testcase classname="tests.test_warchess_api" name="test_session_me_logout_revocation" time="0.350" /><testcase classname="tests.test_warchess_api" name="test_voice_ticket_endpoint_issues_wss_ticket" time="0.101"><error message="failed on setup with &quot;AssertionError: {&quot;detail&quot;:&quot;Please use an existing war room before creating more.&quot;}&#10;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/conftest.py:83: in active_room_context
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Please use an existing war room before creating more."}
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="tests.test_warchess_api" name="test_role_lock_conflicts_and_autostart_constraints" time="0.000"><error message="failed on setup with &quot;AssertionError: {&quot;detail&quot;:&quot;Please use an existing war room before creating more.&quot;}&#10;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/conftest.py:83: in active_room_context
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Please use an existing war room before creating more."}
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="tests.test_warchess_api" name="test_seventh_membership_forbidden" time="0.000"><error message="failed on setup with &quot;AssertionError: {&quot;detail&quot;:&quot;Please use an existing war room before creating more.&quot;}&#10;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/conftest.py:83: in active_room_context
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Please use an existing war room before creating more."}
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="tests.test_warchess_api" name="test_ownership_stale_version_and_ai_turn_block" time="0.000"><error message="failed on setup with &quot;AssertionError: {&quot;detail&quot;:&quot;Please use an existing war room before creating more.&quot;}&#10;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/conftest.py:83: in active_room_context
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Please use an existing war room before creating more."}
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="tests.test_warchess_api" name="test_non_king_cannot_approve" time="0.000"><error message="failed on setup with &quot;AssertionError: {&quot;detail&quot;:&quot;Please use an existing war room before creating more.&quot;}&#10;assert 429 == 200&#10; +  where 429 = &lt;Response [429]&gt;.status_code&quot;">backend/tests/conftest.py:83: in active_room_context
+    assert created.status_code == 200, created.text
+E   AssertionError: {"detail":"Please use an existing war room before creating more."}
+E   assert 429 == 200
+E    +  where 429 = &lt;Response [429]&gt;.status_code</error></testcase><testcase classname="tests.test_security_voice_contracts" name="test_security_headers_and_public_health_contract" time="0.085" /><testcase classname="tests.test_security_voice_contracts" name="test_health_details_requires_auth_and_voice_engine_flags" time="0.167" /><testcase classname="tests.test_security_voice_contracts" name="test_public_leaderboards_hide_internal_identifiers" time="0.483" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_rejects_non_member_or_missing_role" time="0.938" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_ticket_wrong_room_reused_and_expired_denied" time="3.141" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_pcm_frame_contract_and_no_same_sender_echo" time="3.088" /><testcase classname="tests.test_security_voice_contracts" name="test_voice_leave_updates_peer_roster" time="3.935" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_logout_revokes_ws_without_client_ping" time="6.403"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:419: in test_sec001_logout_revokes_ws_without_client_ping
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:416: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase><testcase classname="tests.test_security_voice_contracts" name="test_sec001_session_expiry_sweep_closes_ws" time="0.641" /><testcase classname="tests.test_security_voice_contracts" name="test_sec001_bad_origin_denied_and_max_three_state_connections" time="1.047"><failure message="Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)">backend/tests/test_security_voice_contracts.py:490: in test_sec001_bad_origin_denied_and_max_three_state_connections
+    asyncio.run(scenario())
+/usr/local/lib/python3.11/asyncio/runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+backend/tests/test_security_voice_contracts.py:472: in scenario
+    with pytest.raises((asyncio.TimeoutError, websockets.ConnectionClosed)):
+E   Failed: DID NOT RAISE any of (TimeoutError, ConnectionClosed)</failure></testcase></testsuite></testsuites>

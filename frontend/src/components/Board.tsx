@@ -29,7 +29,7 @@ function MovingPiece({ piece, cell, jump }: { piece: BoardPiece; cell: number; j
   useEffect(() => { const changed = px.value !== x || py.value !== y; px.value = withTiming(x, { duration: 420, easing: Easing.inOut(Easing.cubic) }); py.value = withTiming(y, { duration: 420, easing: Easing.inOut(Easing.cubic) }); if (jump && changed) lift.value = withSequence(withTiming(-cell * 0.65, { duration: 190 }), withTiming(0, { duration: 230 })); }, [x, y, cell, jump, lift, px, py]);
   const animated = useAnimatedStyle(() => ({ transform: [{ translateX: px.value }, { translateY: py.value + lift.value }, { scale: 1 + Math.abs(lift.value) / (cell * 5) }] }));
   const s = useStyles();
-  return <Animated.View pointerEvents="none" style={[s.piece, { width: cell, height: cell }, animated]}><Piece role={piece.role} enemy={piece.enemy} size={cell * 0.93} /></Animated.View>;
+  return <Animated.View style={[s.piece, { width: cell, height: cell, pointerEvents: 'none' }, animated]}><Piece role={piece.role} enemy={piece.enemy} size={cell * 0.93} /></Animated.View>;
 }
 export function Board({ room, selected, onSquare }: { room: Room; selected: string | null; onSquare: (square: string) => void }) {
   const { width } = useWindowDimensions(), s = useStyles(), { colors: c } = useTheme();

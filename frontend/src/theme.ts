@@ -4,6 +4,7 @@ import { storage } from '@/src/utils/storage';
 
 export type ColorScheme = 'dark' | 'light';
 const dark = {
+  studioBackground: '#000000', studioText: '#EEECE5', studioMuted: '#A4A59E', studioBorder: '#343632',
   surface: '#0B0E0D', onSurface: '#F1EEE6', surfaceSecondary: '#141917', onSurfaceSecondary: '#E8E6DF',
   surfaceTertiary: '#1C231F', onSurfaceTertiary: '#BEC4B9', surfaceInverse: '#ECE8DC', onSurfaceInverse: '#101510', muted: '#939D92',
   brand: '#CDB078', onBrand: '#171A12', brandPrimary: '#D5B97C', onBrandPrimary: '#151A12',
@@ -15,6 +16,7 @@ const dark = {
   heroFade: '#0B0E0D00', heroText: '#F2EBDD', heroMuted: '#BDB7A8', heroBackground: '#0B0E0D',
 };
 const light: typeof dark = {
+  studioBackground: '#000000', studioText: '#EEECE5', studioMuted: '#A4A59E', studioBorder: '#343632',
   surface: '#F5F8FA', onSurface: '#1B3444', surfaceSecondary: '#FFFFFF', onSurfaceSecondary: '#294858',
   surfaceTertiary: '#EAF1F6', onSurfaceTertiary: '#4E687B', surfaceInverse: '#24485E', onSurfaceInverse: '#FFFFFF', muted: '#617B8B',
   brand: '#387EA5', onBrand: '#FFFFFF', brandPrimary: '#A9D4EE', onBrandPrimary: '#183D56',

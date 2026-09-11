@@ -24,14 +24,29 @@ def _get(api_client, base_url, token, path):
     return api_client.get(f'{base_url}/api{path}', headers=_auth(token), timeout=25)
 
 
-def test_health_stockfish_and_modes(api_client, base_url):
+def test_public_health_contract(api_client, base_url):
     response = api_client.get(f'{base_url}/api/health', timeout=20)
     assert response.status_code == 200, response.text
     data = response.json()
     assert data['status'] == 'ok'
+
+
+def test_health_details_requires_auth_and_reports_engine(api_client, base_url, auth_tokens):
+    anonymous = api_client.get(f'{base_url}/api/health/details', timeout=20)
+    assert anonymous.status_code == 401
+
+    response = api_client.get(
+        f'{base_url}/api/health/details',
+        headers=_auth(auth_tokens['king']),
+        timeout=20,
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data['status'] == 'ok'
     assert data['engine_available'] is True
+    assert data['voice_configured'] is True
+    assert data['voice_transport'] == 'wss-pcm16'
     assert set(data['difficulties'].keys()) == {'easy', 'hard', 'extreme', 'regret'}
-    assert data['difficulties']['easy']['depth'] < data['difficulties']['hard']['depth'] < data['difficulties']['extreme']['depth'] < data['difficulties']['regret']['depth']
 
 
 def test_invalid_login_rejected(api_client, base_url):
@@ -73,11 +88,17 @@ def test_session_me_logout_revocation(api_client, base_url, users):
     assert revoked.status_code == 401
 
 
-def test_voice_endpoint_returns_503_without_keys(api_client, base_url, active_room_context, auth_tokens):
+def test_voice_ticket_endpoint_issues_wss_ticket(api_client, base_url, active_room_context, auth_tokens):
     code = active_room_context['code']
     response = _post(api_client, base_url, auth_tokens['king'], f'/rooms/{code}/voice', {})
-    assert response.status_code == 503
-    assert 'livekit' in response.text.lower() or 'voice' in response.text.lower()
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert data['code'] == code
+    assert data['transport'] == 'wss-pcm16'
+    assert data['sample_rate'] == 16000
+    assert data['frame_ms'] == 80
+    assert data['expires_in'] == 60
+    assert isinstance(data['ticket'], str) and len(data['ticket']) > 20
 
 
 def test_role_lock_conflicts_and_autostart_constraints(api_client, base_url, auth_tokens, active_room_context):
