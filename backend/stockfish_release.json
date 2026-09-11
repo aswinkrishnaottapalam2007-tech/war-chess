@@ -1,0 +1,18 @@
+{
+  "version": "15.1-4",
+  "license": "GPL-3.0-or-later",
+  "source_url": "https://sources.debian.org/src/stockfish/15.1-4/",
+  "license_url": "https://github.com/official-stockfish/Stockfish/blob/sf_15.1/Copying.txt",
+  "platforms": {
+    "arm64": {
+      "url": "https://deb.debian.org/debian/pool/main/s/stockfish/stockfish_15.1-4_arm64.deb",
+      "package_sha256": "cad193eecf0366709344dc7d32d5b5f686158d99ba76f6dafcc9fae8e7fb1f18",
+      "binary_sha256": "9fe2727bbcd3eaf7c8c814eaba9bac035700831b5b37b9d399433d630b003160"
+    },
+    "amd64": {
+      "url": "https://deb.debian.org/debian/pool/main/s/stockfish/stockfish_15.1-4_amd64.deb",
+      "package_sha256": "ee9da8f9784d87432e6071b7707f22f89955ce44616b701ca4b11334757aa2ae",
+      "binary_sha256": "af67e5f96d92cf6a730f89291ea439ba90ca5bf7921e5d740d79ccfc4584bc92"
+    }
+  }
+}

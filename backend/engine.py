@@ -1,9 +1,8 @@
 import asyncio
-import os
-import shutil
 import chess.engine
+from engine_bootstrap import resolve_engine_path
 
-ENGINE_PATH = os.environ.get('STOCKFISH_PATH') or shutil.which('stockfish') or '/usr/games/stockfish'
+ENGINE_PATH = resolve_engine_path()
 STRENGTH = {
     'easy': {'skill': 0, 'depth': 3, 'time': 0.08},
     'hard': {'skill': 9, 'depth': 11, 'time': 0.4},

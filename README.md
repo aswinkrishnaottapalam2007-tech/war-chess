@@ -25,7 +25,7 @@ memory/PRD.md        Requirements, progress, remaining validation
 ## Development
 Use the versions in `frontend/package.json` (Expo 57). Python 3.11+, MongoDB, and an installed Stockfish executable are required. Secrets belong in local environment files, never source control.
 
-Backend environment: see `backend/.env.example`. `MONGO_URL` is required. Optional `STOCKFISH_PATH` overrides executable discovery. Install Stockfish using your OS package manager; the checked runtime here is Debian Stockfish 15.1. Set a specific `CORS_ORIGINS` allowlist for a production environment.
+Backend environment: see `backend/.env.example`. `MONGO_URL` and `DB_NAME` are required. Optional `STOCKFISH_PATH` overrides executable discovery and must reference an installed executable. Without an explicit path, the backend first uses an installed Stockfish, then bootstraps pinned Debian Stockfish 15.1-4 for Linux arm64/amd64 if necessary. The bootstrap verifies both package and executable SHA-256 hashes, checks a real UCI startup handshake, and writes atomically to a writable cache without root privileges. A first cold start requires HTTPS access to the pinned Debian artifact and a Debian-compatible runtime (glibc >= 2.34, libstdc++6 >= 12); set `STOCKFISH_CACHE_DIR` to customize caching or provision your own engine to avoid startup downloads. Unsupported platforms require an installed Stockfish. CORS is explicitly configured in backend/.env with bearer authentication and cookies disabled; it may be narrowed to known browser origins where appropriate.
 
 ```
 cd backend
@@ -60,6 +60,9 @@ Provide backend-only `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, the
 - Hero artwork is hosted in managed object storage, not a data URI.
 - Cinzel and Manrope fonts: SIL Open Font License; see `THIRD_PARTY_NOTICES.md`.
 - Stockfish and python-chess: GPL-3.0-or-later. Stockfish runs as an external UCI process; its executable is not committed. Preserve GPL obligations when redistributing engine binaries or the python-chess-dependent backend. See third-party notices and corresponding source links.
+
+### Managed preview launch
+The protected `EXPO_PACKAGER_PROXY_URL`/`EXPO_PACKAGER_HOSTNAME` variables provide the managed reverse proxy. Do not add a second ngrok `--tunnel` to the managed supervisor command. Its configuration is marked read-only. The public frontend/backend routes have been verified using the existing proxy arrangement.
 
 ## Verification and remaining work
 See `memory/PRD.md` and `test_reports/`. The application implements actual gameplay, not a visual-only prototype. Full production readiness requires load/soak testing, recovery/observability work and real-device audio verification. No native desktop executable is included.

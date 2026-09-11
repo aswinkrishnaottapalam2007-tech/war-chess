@@ -6,7 +6,7 @@ Runtime installed separately: Stockfish 15.1 (Debian package 15.1-4).
 Corresponding upstream source: https://github.com/official-stockfish/Stockfish/tree/sf_15.1
 Debian packaging/source and any patches: https://sources.debian.org/src/stockfish/15.1-4/
 License: https://github.com/official-stockfish/Stockfish/blob/sf_15.1/Copying.txt
-This repository does not distribute the engine executable. If bundling it, include the license and complete corresponding source in compliance with GPLv3.
+This repository does not distribute the engine executable. A fresh supported Linux runtime can download a checksum-pinned Debian binary package directly from Debian when no installed engine exists; artifact URLs, version, both package/executable hashes, and source/license links are in backend/stockfish_release.json. If bundling or redistributing it, include the license and complete corresponding source in compliance with GPLv3.
 
 ## python-chess
 Copyright Niklas Fiekas and contributors. GPL-3.0-or-later.

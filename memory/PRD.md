@@ -61,3 +61,18 @@ Build a premium cooperative chess strategy game: exactly six human roles (King, 
 
 ## Known scope boundaries
 No native Windows/macOS executable. Desktop is an adaptive browser preview. No guarantee of production readiness from initial implementation. Voice credentials and real-device testing remain necessary.
+
+## Deployment-readiness follow-up
+- User requested deployment-agent health check, with mandatory independent testing of any fixes.
+- Initial readiness scan flagged root .gitignore excluding managed environment configuration and missing explicit backend CORS_ORIGINS.
+- Removed blanket environment-file exclusions while retaining private .env*.local exclusions; added explicit CORS_ORIGINS="*" without changing protected connection values. Bearer authentication still uses allow_credentials=False.
+- Independent testing agent verified both fixes: **10/10 focused checks passed**, including gitignore behavior, preserved protected values, clean backend restart, internal/external Mongo/Stockfish health, actual OPTIONS/GET CORS headers, and authenticated public-URL login/profile/rooms.
+- Report: /app/test_reports/iteration_3.json; regression suite: backend/tests/test_deployment_readiness_config.py.
+- Final deployment-agent rescan requested after independent verification. No deployment has been performed by this task.
+- LiveKit credentials and live audio remain unavailable; production load/device validation remains separate from this configuration-readiness check.
+- A subsequent scan incorrectly required --tunnel. Read-only troubleshooting confirmed the managed EXPO_PACKAGER_PROXY_URL reverse proxy is the supported working setup; supervisor is explicitly read-only and remains unchanged. Static managed hero artwork is an intentional asset URL, not a hardcoded API endpoint.
+- Troubleshooting identified that manually installed Stockfish alone would not guarantee a fresh image. Added a standard-library, checksum-pinned Debian engine bootstrap (Linux arm64/amd64), preserving explicit/system engine preference and requiring a valid UCI handshake before caching. No root installation is needed. Fresh-cache runtime testing requested independently.
+- Independent iteration_4 verification passed **21/21 checks**: real empty-cache ARM64 download, both integrity checks, executable UCI handshake and legal engine move from the downloaded binary, offline cache reuse, corruption failure, path precedence, prior config/rules regressions, and public preview reachability without --tunnel. Report: test_reports/iteration_4.json.
+- AMD64 artifact is pinned but runtime execution was not tested on this ARM64 host; a fresh Kubernetes deployment was not performed. The cold-cache path was verified in the current compatible Debian runtime. First-use download connectivity/native-library requirements are documented in README.
+- **Final readiness scan remains FAIL**, solely because deployment_agent insists on --tunnel in the explicitly read-only managed supervisor file. This conflicts with the troubleshoot_agent conclusion and independent tests showing the protected reverse proxy works without it. No supervisor changes were made to satisfy the scanner at the expense of the supported runtime. Compilation, environment, CORS, build-context, database, and app URL checks all passed in the final scan.
+- Outstanding readiness action: resolve the scanner's managed-proxy/supervisor check discrepancy. Do not claim unconditional deployment readiness while the automated scan is still failing. No deployment was performed.
