@@ -76,3 +76,11 @@ No native Windows/macOS executable. Desktop is an adaptive browser preview. No g
 - AMD64 artifact is pinned but runtime execution was not tested on this ARM64 host; a fresh Kubernetes deployment was not performed. The cold-cache path was verified in the current compatible Debian runtime. First-use download connectivity/native-library requirements are documented in README.
 - **Final readiness scan remains FAIL**, solely because deployment_agent insists on --tunnel in the explicitly read-only managed supervisor file. This conflicts with the troubleshoot_agent conclusion and independent tests showing the protected reverse proxy works without it. No supervisor changes were made to satisfy the scanner at the expense of the supported runtime. Compilation, environment, CORS, build-context, database, and app URL checks all passed in the final scan.
 - Outstanding readiness action: resolve the scanner's managed-proxy/supervisor check discrepancy. Do not claim unconditional deployment readiness while the automated scan is still failing. No deployment was performed.
+
+## Read-only security audit follow-up
+- User requested a deployed-app audit, supplied no live URL, and authorized proceeding with best judgment. Security audit agent reviewed current code/config; production runtime identity/TLS/headers/edge and LiveKit provider settings were not confirmed.
+- Verdict: conditional pass, medium confidence; no Critical/High vulnerabilities identified in reviewed source, not an unconditional production security sign-off.
+- SEC-001 LOW/likely: existing WebSocket broadcasts may continue after logout/session revocation if the client withholds heartbeat; server-side revocation/expiry enforcement recommended.
+- SEC-002 LOW/confirmed in source: public role leaderboard returns internal user UUIDs alongside names/statistics; remove internal identifiers or restrict intended visibility.
+- Hardening: per-user connection/resource limits, minimal public health metadata, appropriate browser origin restrictions, production security headers/TLS verification.
+- Report saved at test_reports/security_audit.md. No application or infrastructure fixes were applied during this read-only audit. Subsequent fixes require independent testing-agent verification before being marked resolved.
