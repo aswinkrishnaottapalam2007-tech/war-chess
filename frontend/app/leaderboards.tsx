@@ -1,0 +1,15 @@
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Screen, Title, Body, Label, Chips, Card, Notice } from '@/src/components/ui';
+import { Piece } from '@/src/components/Piece';
+import { makeStyles, useTheme } from '@/src/theme';
+import { ROLES, Role } from '@/src/types';
+import { api } from '@/src/api';
+
+export default function Leaderboards() {
+  const [role, setRole] = useState<Role>('king'), [players, setPlayers] = useState<any[]>([]), [loading, setLoading] = useState(true), [error, setError] = useState(''), s = useStyles(), { colors: c } = useTheme();
+  useEffect(() => { let alive = true; setLoading(true); setError(''); api(`/leaderboards/${role}`).then(data => { if (alive) setPlayers(data.players); }).catch(e => { if (alive) setError(e.message); }).finally(() => { if (alive) setLoading(false); }); return () => { alive = false; }; }, [role]);
+  return <Screen title="Hall of commanders" eyebrow="SIX ROLES. SIX LEGACIES." scroll={false}><Chips items={ROLES.map(r => ({ id: r, label: r.charAt(0).toUpperCase() + r.slice(1) }))} selected={role} onSelect={v => setRole(v as Role)} /><ScrollView contentContainerStyle={s.content}><View style={s.intro}><Piece role={role} size={75} /><Label>THE {role.toUpperCase()} LEADERBOARD</Label><Title>Earn your place.</Title><Body muted>Ranked by victories, then captures. Only completed battles count.</Body></View>{loading ? <ActivityIndicator color={c.brand} /> : error ? <Notice text={error} /> : players.length === 0 ? <Card><Ionicons name="trophy-outline" color={c.brand} size={28} /><Text style={s.emptyTitle}>A legacy yet to be written.</Text><Body muted>No completed battles for this role yet. Rally your team and claim the first place.</Body></Card> : players.map((p, i) => <View testID={`leaderboard-rank-${i + 1}`} key={p.user_id} style={s.row}><Text style={s.rank}>{String(i + 1).padStart(2, '0')}</Text><View style={s.info}><Text style={s.name}>{p.name}</Text><Text style={s.meta}>{p.games} BATTLES · {p.captures} CAPTURES</Text></View><View><Text style={s.wins}>{p.wins}</Text><Text style={s.meta}>WINS</Text></View></View>)}</ScrollView></Screen>;
+}
+const useStyles = makeStyles(c => ({ content: { padding: 24, gap: 20, maxWidth: 760, alignSelf: 'center', width: '100%' }, intro: { gap: 12, alignItems: 'center', paddingVertical: 18 }, emptyTitle: { fontFamily: 'Cinzel', fontSize: 19, color: c.onSurface }, row: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 18, borderBottomWidth: 1, borderBottomColor: c.border }, rank: { fontFamily: 'Cinzel', color: c.brand, fontSize: 23 }, info: { flex: 1, gap: 6 }, name: { fontFamily: 'Manrope', color: c.onSurface, fontSize: 15, fontWeight: '600' }, meta: { fontFamily: 'Manrope', color: c.muted, fontSize: 8, letterSpacing: 1 }, wins: { fontFamily: 'Cinzel', color: c.brand, fontSize: 22, textAlign: 'center' } }));

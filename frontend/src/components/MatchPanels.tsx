@@ -1,0 +1,27 @@
+import React from 'react';
+import { Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Body, Button, Card, Label, Notice } from './ui';
+import { Piece } from './Piece';
+import { RoomAction } from './Lobby';
+import { ROLES, Room } from '@/src/types';
+import { makeStyles, useTheme } from '@/src/theme';
+import { useApp } from '@/src/context';
+
+export function TeamPanel({ room }: { room: Room }) {
+  const s = useStyles(), { colors: c } = useTheme();
+  return <View style={s.list}>{ROLES.map(role => { const p = room.players[role]; return <View testID={`team-${role}`} key={role} style={s.teamRow}><Piece role={role} size={42} /><View style={s.info}><Text style={s.name}>{p?.name || 'Unassigned'}</Text><Text style={s.meta}>{role.toUpperCase()} · {p?.state?.toUpperCase() || 'AVAILABLE'}</Text></View><View style={s.right}><View style={[s.dot, { backgroundColor: p?.connected ? c.success : c.muted }]} /><Text style={s.meta}>{Object.values(room.owners).filter(owner => owner === role).length} PIECES</Text></View></View>; })}<Notice text="Eliminated commanders who keep spectating may return through pawn promotion. Leaving makes revival unavailable." /></View>;
+}
+export function VotePanel({ room, act }: { room: Room; act: RoomAction }) {
+  const s = useStyles(), { user } = useApp(), yes = Object.values(room.votes).filter(Boolean).length;
+  return <View style={s.list}><Text testID="restart-vote-count" style={s.voteNumber}>{yes} <Text style={s.voteTotal}>/ 4</Text></Text><Label>YES VOTES REQUIRED TO RESTART</Label><Body muted>A new battle requires more than half of the six commanders. Your current board and command count will reset. Everyone must ready up again.</Body>{ROLES.map(role => { const p = room.players[role]; if (!p) return null; const vote = room.votes[p.id]; return <View key={role} style={s.voteRow}><Text style={s.name}>{p.name} · {role}</Text><Text style={s.meta}>{vote === true ? 'YES' : vote === false ? 'NO' : 'WAITING'}</Text></View>; })}<Button testID="vote-yes-button" title={room.votes[user?.id || ''] === true ? 'VOTED YES' : 'VOTE TO RESTART'} onPress={() => act({ type: 'restart', yes: true })} /><Button testID="vote-no-button" title={room.votes[user?.id || ''] === false ? 'VOTED NO' : 'KEEP FIGHTING'} variant="secondary" onPress={() => act({ type: 'restart', yes: false })} /></View>;
+}
+export function HistoryPanel({ room }: { room: Room }) {
+  const s = useStyles();
+  return <View style={s.list}>{room.history.length === 0 ? <Body muted>No moves yet. Your opening chapter is unwritten.</Body> : room.history.map((h, i) => <View key={i} style={s.voteRow}><Label>{String(Math.floor(i / 2) + 1).padStart(2, '0')}{i % 2 ? ' …' : '.'}</Label><Text style={s.move}>{h.san}</Text><Text style={s.meta}>{h.actor.toUpperCase()}</Text></View>)}<Label>RECENT EVENTS</Label>{room.events.slice(-12).reverse().map(e => <Text key={e.id} style={s.event}>{e.message}</Text>)}</View>;
+}
+export function ResultPanel({ room, onRestart, onExit }: { room: Room; onRestart: () => void; onExit: () => void }) {
+  const s = useStyles(), { colors: c } = useTheme();
+  return <View style={s.result}><View style={s.emblem}><Ionicons name={room.result === 'victory' ? 'trophy-outline' : 'shield-outline'} size={54} color={c.brand} /></View><Label>THE BATTLE IS OVER</Label><Text testID="match-result-title" style={s.resultTitle}>{room.result === 'victory' ? 'VICTORY' : 'KINGDOM FALLEN'}</Text><Body>{room.result_reason}</Body><Card><View style={s.resultStats}><View><Label>TEAM MOVES</Label><Text style={s.stat}>{room.human_moves}</Text></View><View><Label>KING COMMANDS</Label><Text style={s.stat}>{room.command_count} / 3</Text></View></View></Card><Body muted>Every battle shapes your legacy. Your role statistics have been recorded.</Body><Button testID="result-restart-button" title="RALLY THE ALLIANCE · VOTE RESTART" onPress={onRestart} /><Button testID="result-exit-button" title="RETURN TO MAIN MENU" variant="secondary" onPress={onExit} /></View>;
+}
+const useStyles = makeStyles(c => ({ list: { gap: 18 }, teamRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingBottom: 15, borderBottomWidth: 1, borderBottomColor: c.border }, info: { flex: 1, gap: 6 }, name: { fontFamily: 'Manrope', fontSize: 13, color: c.onSurface, flexShrink: 1 }, meta: { fontFamily: 'Manrope', fontSize: 8, letterSpacing: 0.8, color: c.muted }, right: { alignItems: 'flex-end', gap: 10 }, dot: { width: 6, height: 6, borderRadius: 3 }, voteNumber: { fontFamily: 'Cinzel', fontSize: 65, color: c.brand }, voteTotal: { fontSize: 28, color: c.muted }, voteRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 15, paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: c.border }, move: { fontFamily: 'Cinzel', fontSize: 22, color: c.onSurface, flex: 1 }, event: { fontFamily: 'Manrope', fontSize: 12, color: c.muted, lineHeight: 20 }, result: { gap: 22, paddingVertical: 20 }, emblem: { width: 110, height: 110, borderWidth: 1, borderColor: c.borderStrong, alignItems: 'center', justifyContent: 'center', borderRadius: 55, alignSelf: 'center', backgroundColor: c.brandTertiary }, resultTitle: { fontFamily: 'Cinzel', fontSize: 31, color: c.onSurface, textAlign: 'center' }, resultStats: { flexDirection: 'row', justifyContent: 'space-between' }, stat: { fontFamily: 'Cinzel', fontSize: 28, color: c.brand, marginTop: 8 } }));

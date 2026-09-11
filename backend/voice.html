@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>WAR CHESS · Team voice</title>
+<style>body{background:#101211;color:#eee8db;font:16px system-ui;padding:28px;margin:0}h1{font:28px Georgia;letter-spacing:2px}button{background:#d2b477;color:#101211;border:0;padding:16px 22px;border-radius:8px;font-weight:700;margin:12px 8px 12px 0}p{color:#adafa7;line-height:1.6}#participants{padding-top:20px}</style></head><body>
+<h1>TEAM VOICE</h1><p>Your microphone connects you to your six-command team. You can mute or leave at any time.</p>
+<p id="status" role="status">Ready to connect.</p><button id="join">Enable microphone & join</button><button id="mute" hidden>Mute microphone</button><button id="leave" hidden>Leave voice</button><div id="participants"></div>
+<script src="/api/static/livekit-client.umd.js"></script><script>
+let room, credentials, muted=false, denied=0;
+const status=document.getElementById('status'),join=document.getElementById('join'),mute=document.getElementById('mute'),leave=document.getElementById('leave');
+try{credentials=JSON.parse(decodeURIComponent(location.hash.slice(1)));history.replaceState(null,'',location.pathname)}catch(e){}
+window.setVoiceCredentials=c=>{credentials=c;};
+const names=()=>{document.getElementById('participants').textContent=room?'In voice: '+[room.localParticipant.name,...Array.from(room.remoteParticipants.values()).map(p=>p.name)].join(', '):'';};
+join.onclick=async()=>{try{if(!credentials)throw Error('Return to your war room and reopen voice.');
+if(navigator.permissions){try{const p=await navigator.permissions.query({name:'microphone'});if(p.state==='denied'){denied++;throw Error('Microphone is blocked. Open your browser or device settings, allow microphone access, then return.');}}catch(e){if(e.message.includes('blocked'))throw e;}}
+join.disabled=true;status.textContent='Connecting securely…';room=new LivekitClient.Room();
+room.on(LivekitClient.RoomEvent.TrackSubscribed,(track)=>{if(track.kind==='audio'){const audio=track.attach();document.body.appendChild(audio);}});
+room.on(LivekitClient.RoomEvent.TrackUnsubscribed,(track)=>track.detach().forEach(el=>el.remove()));
+room.on(LivekitClient.RoomEvent.ParticipantConnected,names);room.on(LivekitClient.RoomEvent.ParticipantDisconnected,names);
+room.on(LivekitClient.RoomEvent.Reconnecting,()=>status.textContent='Reconnecting…');room.on(LivekitClient.RoomEvent.Reconnected,()=>status.textContent='Connected to team voice');
+await room.connect(credentials.server_url,credentials.participant_token);await room.startAudio();await room.localParticipant.setMicrophoneEnabled(true);
+status.textContent='Connected to team voice';join.hidden=true;mute.hidden=false;leave.hidden=false;names();
+}catch(e){status.textContent=e.message;join.disabled=false;await room?.disconnect();}};
+mute.onclick=async()=>{muted=!muted;await room.localParticipant.setMicrophoneEnabled(!muted);mute.textContent=muted?'Unmute microphone':'Mute microphone';};
+leave.onclick=async()=>{await room?.disconnect();status.textContent='You left voice. Text chat is still available in your war room.';join.hidden=false;join.disabled=false;mute.hidden=true;leave.hidden=true;};
+window.addEventListener('pagehide',()=>room?.disconnect());
+</script></body></html>
